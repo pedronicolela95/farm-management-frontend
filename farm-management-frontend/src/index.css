@@ -1,0 +1,26 @@
+/* normalizing the webpage */
+@import url(./vendor/normalize.css);
+
+/* importing fonts */
+@import url(./fonts/inter/inter.css);
+
+/* default settings */
+@import url(./blocks/root/root.css);
+
+/* header's settings */
+@import url(./blocks/header/header.css);
+@import url(./blocks/header/__image.css/header__image.css);
+@import url(./blocks/header/__info/header__info.css);
+@import url(./blocks/header/__message/header__message.css);
+@import url(./blocks/header/__signout_link/header__signout_link.css);
+
+/* footer's settings */
+@import url(./blocks/footer/footer.css);
+@import url(./blocks/footer/__author/footer__author.css);
+
+/* importing login */
+@import url(./blocks/login/login.css);
+@import url(./blocks/login/__header/login__header.css);
+@import url(./blocks/login/__input/login__input.css);
+@import url(./blocks/login/__button/login__button.css);
+@import url(./blocks/login/__subtitle/login__subtitle.css);

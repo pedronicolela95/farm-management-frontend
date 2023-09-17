@@ -1,0 +1,14 @@
+.login__button {
+  height: 50px;
+  width: 100%;
+
+  margin: 50px auto 15px;
+
+  border-radius: 10px;
+  background: rgba(0, 100, 0, 1);
+  text-align: center;
+
+  font-size: 18px;
+  color: white;
+  font-weight: 400;
+}
