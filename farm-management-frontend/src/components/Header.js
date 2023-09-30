@@ -1,10 +1,10 @@
 import headerImageImg from "../images/header/header__image.svg";
-// import { useHistory } from "react-router-dom";
+import { useHistory } from "react-router-dom";
 
 function Header(props) {
-  // const history = useHistory();
-  //fix me
-  const currentURL = "";
+  const history = useHistory();
+
+  const currentURL = history.location.pathname;
   let contentHeader = "";
 
   if (currentURL === "/signin") {

@@ -1,15 +1,13 @@
 import React, { useState } from "react";
-// import InfoTooltip from "./InfoTooltip.js";
-// import { withRouter, useHistory } from "react-router-dom";
-//fix me with router
+import InfoTooltip from "./InfoTooltip.js";
+import { withRouter, useHistory } from "react-router-dom";
 
 function Login(props) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isSuccess, setSuccess] = useState(false);
 
-  // const history = useHistory();
-  //fix me with router
+  const history = useHistory();
 
   const handleEmailChange = (event) => {
     setEmail(event.target.value);
@@ -40,23 +38,19 @@ function Login(props) {
   const handleClosePopup = () => {
     props.closeAllPopups();
     if (isSuccess) {
-      // history.push("/");
-      //fix me with router
+      history.push("/");
     }
   };
 
   return (
     <>
-      {/* <InfoTooltip
+      <InfoTooltip
         isSuccess={isSuccess}
         isOpen={props.isOpen}
         name="login"
         isLogin={true}
         onClose={handleClosePopup}
       />
-      fix me 
-      */}
-
       <form className="login" onSubmit={handleSubmit}>
         <h1 className="login__header">Entrar</h1>
         <input
@@ -86,5 +80,4 @@ function Login(props) {
     </>
   );
 }
-export default Login;
-//fix me with router
+export default withRouter(Login);
