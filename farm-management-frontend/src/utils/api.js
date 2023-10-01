@@ -4,8 +4,8 @@ export default class Api {
     this.headers = options.headers;
   }
 
-  getInitialCards() {
-    const url = this.baseUrl + "/cards";
+  getFinancials() {
+    const url = this.baseUrl + "/financials";
     const data = { headers: this.headers };
     return fetch(url, data).then((res) => {
       if (res.ok) {
@@ -16,12 +16,19 @@ export default class Api {
     });
   }
 
-  postCards(newPost) {
-    const url = this.baseUrl + "/cards";
+  createFinancials(newFinancial) {
+    const url = this.baseUrl + "/financials";
     const data = {
       headers: this.headers,
       method: "POST",
-      body: JSON.stringify({ name: newPost.name, link: newPost.link }),
+      body: JSON.stringify({
+        description: newFinancial.description,
+        category: newFinancial.category,
+        type: newFinancial.type,
+        date: newFinancial.date,
+        amount: newFinancial.amount,
+        hasOcurred: newFinancial.hasOcurred,
+      }),
     };
     return fetch(url, data).then((res) => {
       if (res.ok) {
@@ -32,8 +39,8 @@ export default class Api {
     });
   }
 
-  deleteCard(cardId) {
-    const url = this.baseUrl + "/cards/" + cardId;
+  deleteCard(financialId) {
+    const url = this.baseUrl + "/financials/" + financialId;
     const data = { headers: this.headers, method: "DELETE" };
     return fetch(url, data).then((res) => {
       if (res.ok) {
@@ -44,11 +51,13 @@ export default class Api {
     });
   }
 
-  likeCard(cardId, isLikedByUser) {
-    const method = isLikedByUser ? "DELETE" : "PUT";
-    const url = this.baseUrl + "/cards/" + cardId + "/likes";
-    const data = { headers: this.headers, method: method };
-
+  getFinancialsMonthly(type, hasOcurred) {
+    const url = this.baseUrl + "/financials/financials-monthly";
+    const data = {
+      headers: this.headers,
+      method: "GET",
+      body: JSON.stringify({ type: type, hasOcurred: hasOcurred }),
+    };
     return fetch(url, data).then((res) => {
       if (res.ok) {
         return res.json();
@@ -58,8 +67,40 @@ export default class Api {
     });
   }
 
-  getProfileInfo() {
-    const url = this.baseUrl + "/users/me";
+  getFinancialsCategories(type, hasOcurred) {
+    const url = this.baseUrl + "/financials/financials-category";
+    const data = {
+      headers: this.headers,
+      method: "GET",
+      body: JSON.stringify({ type: type, hasOcurred: hasOcurred }),
+    };
+    return fetch(url, data).then((res) => {
+      if (res.ok) {
+        return res.json();
+      }
+      // se o servidor retornar um erro, rejeite a promessa
+      return Promise.reject(`Error: ${res.status}`);
+    });
+  }
+
+  getProfitsMonthly(hasOcurred) {
+    const url = this.baseUrl + "/financials/profit-monthly";
+    const data = {
+      headers: this.headers,
+      method: "GET",
+      body: JSON.stringify({ type: type, hasOcurred: hasOcurred }),
+    };
+    return fetch(url, data).then((res) => {
+      if (res.ok) {
+        return res.json();
+      }
+      // se o servidor retornar um erro, rejeite a promessa
+      return Promise.reject(`Error: ${res.status}`);
+    });
+  }
+
+  getFarmInfo() {
+    const url = this.baseUrl + "/farm-info";
     const data = { headers: this.headers };
 
     return fetch(url, data).then((res) => {
@@ -71,14 +112,15 @@ export default class Api {
     });
   }
 
-  updateProfileInfo(profileInfo) {
-    const url = this.baseUrl + "/users/me";
+  updateFarmInfo(farmInfo) {
+    const url = this.baseUrl + "/farm-info";
     const data = {
       headers: this.headers,
       method: "PATCH",
       body: JSON.stringify({
-        name: profileInfo.name,
-        about: profileInfo.about,
+        farmName: farmInfo.farmName,
+        city: farmInfo.city,
+        state: farmInfo.state,
       }),
     };
 
@@ -91,14 +133,14 @@ export default class Api {
     });
   }
 
-  updateProfileImage(profileLink) {
-    const url = this.baseUrl + "/users/me/avatar";
+  updateFarmImage(farmInfo) {
+    const url = this.baseUrl + "/farm-info/farm-photo";
 
     const data = {
       headers: this.headers,
       method: "PATCH",
       body: JSON.stringify({
-        avatar: profileLink.avatar,
+        farmPhoto: farmInfo.farmPhoto,
       }),
     };
 

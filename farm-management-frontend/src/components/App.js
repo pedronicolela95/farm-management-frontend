@@ -8,7 +8,7 @@ import Register from "./Register";
 import Login from "./Login";
 // import ProtectedRoute from "./ProtectedRoute";
 
-// import Api from "../utils/api";
+import Api from "../utils/api";
 import { authorize, authenticate } from "../utils/auth";
 
 import { CurrentUserContext } from "../contexts/CurrentUserContext";
