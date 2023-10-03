@@ -22,6 +22,9 @@ function Login(props) {
     props
       .onLogin(email, password)
       .then((res) => {
+        if (!res.user) {
+          throw Error(res);
+        }
         setEmail("");
         setPassword("");
         setSuccess(true);

@@ -6,7 +6,7 @@ export default class Api {
 
   getFinancials() {
     const url = this.baseUrl + "/financials";
-    const data = { headers: this.headers };
+    const data = { headers: this.headers, method: "GET" };
     return fetch(url, data).then((res) => {
       if (res.ok) {
         return res.json();
@@ -39,7 +39,7 @@ export default class Api {
     });
   }
 
-  deleteCard(financialId) {
+  deleteFinancials(financialId) {
     const url = this.baseUrl + "/financials/" + financialId;
     const data = { headers: this.headers, method: "DELETE" };
     return fetch(url, data).then((res) => {
@@ -51,11 +51,11 @@ export default class Api {
     });
   }
 
-  getFinancialsMonthly(type, hasOcurred) {
+  postFinancialsMonthly(type, hasOcurred) {
     const url = this.baseUrl + "/financials/financials-monthly";
     const data = {
       headers: this.headers,
-      method: "GET",
+      method: "POST",
       body: JSON.stringify({ type: type, hasOcurred: hasOcurred }),
     };
     return fetch(url, data).then((res) => {
@@ -67,11 +67,11 @@ export default class Api {
     });
   }
 
-  getFinancialsCategories(type, hasOcurred) {
+  postFinancialsCategories(type, hasOcurred) {
     const url = this.baseUrl + "/financials/financials-category";
     const data = {
       headers: this.headers,
-      method: "GET",
+      method: "POST",
       body: JSON.stringify({ type: type, hasOcurred: hasOcurred }),
     };
     return fetch(url, data).then((res) => {
@@ -83,12 +83,12 @@ export default class Api {
     });
   }
 
-  getProfitsMonthly(hasOcurred) {
+  postProfitsMonthly(hasOcurred) {
     const url = this.baseUrl + "/financials/profit-monthly";
     const data = {
       headers: this.headers,
-      method: "GET",
-      body: JSON.stringify({ type: type, hasOcurred: hasOcurred }),
+      method: "POST",
+      body: JSON.stringify({ hasOcurred: hasOcurred }),
     };
     return fetch(url, data).then((res) => {
       if (res.ok) {

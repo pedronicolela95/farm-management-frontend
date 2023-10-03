@@ -1,0 +1,13 @@
+.graphics {
+  margin: 30px 10px 30px 10px;
+  display: grid;
+  gap: 10px;
+  grid-template-columns: 66% 33%;
+}
+
+@media screen and (max-width: 690px) {
+  .graphics {
+    display: flex;
+    flex-direction: column;
+  }
+}

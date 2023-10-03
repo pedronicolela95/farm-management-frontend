@@ -46,3 +46,24 @@
 @import url(./blocks/popup/__error/_visible/popup__error_visible.css);
 @import url(./blocks/popup/__button/popup__button.css);
 @import url(./blocks/popup/__button/_disabled/popup__button_disabled.css);
+
+/* profile's section settings */
+@import url(./blocks/profile/profile.css);
+@import url(./blocks/profile/__image/profile__image.css);
+@import url(./blocks/profile/__picture-overlay/profile__picture-overlay.css);
+@import url(./blocks/profile/__edit-picture/profile__edit-picture.css);
+@import url(./blocks/profile/__picture/profile__picture.css);
+@import url(./blocks/profile/__info/profile__info.css);
+@import url(./blocks/profile/__name/profile__name.css);
+@import url(./blocks/profile/__about-me/profile__about-me.css);
+@import url(./blocks/profile/__edit-button/profile__edit-button.css);
+
+/* graphic's section settings */
+@import url(./blocks/graphics/graphics.css);
+@import url(./blocks/graphics/__title/graphics__title.css);
+@import url(./blocks/graphic/graphic.css);
+@import url(./blocks/graphic/__bar/graphic__bar.css);
+@import url(./blocks/graphic/__pie/graphic__pie.css);
+@import url(./blocks/graphic/__profit-monthly/graphic__profit-monthly.css);
+@import url(./blocks/graphic/__title/graphic__title.css);
+@import url(./blocks/graphic/__error/graphic__error.css);

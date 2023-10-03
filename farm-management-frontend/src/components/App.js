@@ -2,11 +2,11 @@ import React from "react";
 import { Route, Switch, withRouter, useHistory } from "react-router-dom";
 
 import Header from "./Header";
-// import Main from "./Main";
+import Main from "./Main";
 import Footer from "./Footer";
 import Register from "./Register";
 import Login from "./Login";
-// import ProtectedRoute from "./ProtectedRoute";
+import ProtectedRoute from "./ProtectedRoute";
 
 import Api from "../utils/api";
 import { authorize, authenticate } from "../utils/auth";
@@ -17,20 +17,46 @@ function App(props) {
   const [isEditProfilePopupOpen, setEditProfilePopupOpen] =
     React.useState(false);
 
-  const [isAddPlacePopupOpen, setAddPlacePopupOpen] = React.useState(false);
   const [isEditAvatarPopupOpen, setEditAvatarPopupOpen] = React.useState(false);
-  const [isImagePopupOpen, setImagePopupOpen] = React.useState(false);
-  const [selectedCard, setSelectedCard] = React.useState("");
-  const [currentUser, setCurrentUser] = React.useState("");
-  const [cards, setCards] = React.useState([]);
+  const [currentFarm, setCurrentFarm] = React.useState("");
 
-  const [isLoggedIn, setIsLoggedIn] = React.useState(true);
+  const [isLoggedIn, setIsLoggedIn] = React.useState(false);
   const [farmName, setFarmName] = React.useState("");
   const [InfoTooltipOpen, setInfoTooltipOpen] = React.useState(false);
 
   const [token, setToken] = React.useState(localStorage.getItem("jwt"));
 
+  const [financials, setFinancials] = React.useState("");
+  const [incurredRevenueMonthly, setIncurredRevenueMonthly] =
+    React.useState("");
+  const [incurredCostMonthly, setIncurredCostMonthly] = React.useState("");
+  const [incurredProfitMonthly, setIncurredProfitMonthly] = React.useState("");
+  const [projectedRevenueMonthly, setProjectedRevenueMonthly] =
+    React.useState("");
+  const [projectedCostMonthly, setProjectedCostMonthly] = React.useState("");
+  const [projectedProfitMonthly, setProjectedProfitMonthly] =
+    React.useState("");
+  const [incurredRevenueCategories, setIncurredRevenueCategories] =
+    React.useState("");
+  const [incurredCostCategories, setIncurredCostCategories] =
+    React.useState("");
+  const [projectedRevenueCategories, setProjectedRevenueCategories] =
+    React.useState("");
+  const [projectedCostCategories, setProjectedCostCategories] =
+    React.useState("");
+
   const history = useHistory();
+
+  const BASE_URL = "http://localhost:3000";
+  // fix me
+
+  const api = new Api({
+    baseUrl: BASE_URL,
+    headers: {
+      authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
+    },
+  });
 
   function onSignOut() {
     localStorage.removeItem("jwt");
@@ -40,26 +66,70 @@ function App(props) {
   }
 
   function closeAllPopups() {
-    setImagePopupOpen(false);
     setEditAvatarPopupOpen(false);
     setEditProfilePopupOpen(false);
-    setAddPlacePopupOpen(false);
     setInfoTooltipOpen(false);
-    setSelectedCard("");
   }
+
+  const getFinancialsData = async () => {
+    try {
+      const [
+        financialsData,
+        incurredRevenueMonthlyData,
+        incurredCostMonthlyData,
+        incurredProfitMonthlyData,
+        projectedRevenueMonthlyData,
+        projectedCostMonthlyData,
+        projectedProfitMonthlyData,
+        incurredRevenueCategoriesData,
+        incurredCostCategoriesData,
+        projectedRevenueCategoriesData,
+        projectedCostCategoriesData,
+      ] = await Promise.all([
+        api.getFinancials(),
+        api.postFinancialsMonthly("Receita", true),
+        api.postFinancialsMonthly("Custo", true),
+        api.postProfitsMonthly(true),
+        api.postFinancialsMonthly("Receita", false),
+        api.postFinancialsMonthly("Custo", false),
+        api.postProfitsMonthly(false),
+        api.postFinancialsCategories("Receita", true),
+        api.postFinancialsCategories("Custo", true),
+        api.postFinancialsCategories("Receita", false),
+        api.postFinancialsCategories("Custo", false),
+      ]);
+
+      setFinancials(financialsData);
+      setIncurredRevenueMonthly(incurredRevenueMonthlyData.calculateFinancials);
+      setIncurredCostMonthly(incurredCostMonthlyData.calculateFinancials);
+      setIncurredProfitMonthly(incurredProfitMonthlyData.profit);
+      setProjectedRevenueMonthly(
+        projectedRevenueMonthlyData.calculateFinancials
+      );
+      setProjectedCostMonthly(projectedCostMonthlyData.calculateFinancials);
+      setProjectedProfitMonthly(projectedProfitMonthlyData.profit);
+      setIncurredRevenueCategories(incurredRevenueCategoriesData.financial);
+      setIncurredCostCategories(incurredCostCategoriesData.financial);
+      setProjectedRevenueCategories(projectedRevenueCategoriesData.financial);
+      setProjectedCostCategories(projectedCostCategoriesData.financial);
+    } catch (error) {
+      console.error("Erro ao buscar dados:", error);
+    }
+  };
 
   function authenticateWithToken(token) {
     return authenticate(token)
       .then((res) => {
         setFarmName(res.user.farmName);
         setIsLoggedIn(true);
+        setCurrentFarm(res.user);
         return res;
       })
       .then((res) => {
+        getFinancialsData();
         return res;
       })
       .catch((error) => {
-        console.log(error);
         return error;
       });
   }
@@ -94,7 +164,7 @@ function App(props) {
   React.useEffect(() => {
     authenticateWithToken(token)
       .then((res) => {
-        if (res.user.email) {
+        if (res.user.farmName) {
           history.push("/");
         }
       })
@@ -103,8 +173,22 @@ function App(props) {
       });
   }, []);
 
+  React.useEffect(() => {
+    api
+      .getFarmInfo()
+      .then((res) => {
+        setCurrentFarm(res.user);
+      })
+      .then((res) => {
+        getFinancialsData();
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }, []);
+
   return (
-    <CurrentUserContext.Provider value={currentUser}>
+    <CurrentUserContext.Provider value={currentFarm}>
       <Header farmName={farmName} onSignOut={onSignOut} />
       <Switch>
         <Route exact path="/signup">
@@ -122,6 +206,22 @@ function App(props) {
             handleAuthResponse={handleAuthResponse}
           />
         </Route>
+        <ProtectedRoute
+          path="/"
+          loggedIn={isLoggedIn}
+          component={Main}
+          currentFarm={currentFarm}
+          incurredRevenueMonthly={incurredRevenueMonthly}
+          incurredCostMonthly={incurredCostMonthly}
+          incurredProfitMonthly={incurredProfitMonthly}
+          incurredRevenueCategories={incurredRevenueCategories}
+          incurredCostCategories={incurredCostCategories}
+          projectedRevenueMonthly={projectedRevenueMonthly}
+          projectedCostMonthly={projectedCostMonthly}
+          projectedProfitMonthly={projectedProfitMonthly}
+          projectedRevenueCategories={projectedRevenueCategories}
+          projectedCostCategories={projectedCostCategories}
+        />
       </Switch>
       <Footer />
     </CurrentUserContext.Provider>
