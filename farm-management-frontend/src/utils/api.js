@@ -51,6 +51,18 @@ export default class Api {
     });
   }
 
+  convertFinancials(financialId) {
+    const url = this.baseUrl + "/financials/convert/" + financialId;
+    const data = { headers: this.headers, method: "PATCH" };
+    return fetch(url, data).then((res) => {
+      if (res.ok) {
+        return res.json();
+      }
+      // se o servidor retornar um erro, rejeite a promessa
+      return Promise.reject(`Error: ${res.status}`);
+    });
+  }
+
   postFinancialsMonthly(type, hasOcurred) {
     const url = this.baseUrl + "/financials/financials-monthly";
     const data = {

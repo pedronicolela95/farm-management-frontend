@@ -1,9 +1,22 @@
 import React from "react";
 import editButtonImg from "../images/profile/edit_button.svg";
 import editImageButton from "../images/profile/edit-picture.svg";
+import { useHistory } from "react-router-dom";
 
 function Profile(props) {
   const { currentFarm } = props;
+
+  const history = useHistory();
+  const redirectLink =
+    history.location.pathname === "/details" ? "/" : "/details";
+  const buttonDescription =
+    history.location.pathname === "/details"
+      ? "Visualizar Gráficos"
+      : "Gerenciar Finanças";
+
+  function redirectPage() {
+    history.push(redirectLink);
+  }
 
   return (
     <>
@@ -32,6 +45,9 @@ function Profile(props) {
             />
           </button>
         </div>
+        <button className="profile__redirect-button" onClick={redirectPage}>
+          {buttonDescription}
+        </button>
       </section>
     </>
   );

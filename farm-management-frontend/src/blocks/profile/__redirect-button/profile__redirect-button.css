@@ -1,0 +1,21 @@
+.profile__redirect-button {
+  background-color: #768d99;
+  height: 50px;
+  width: 150px;
+  color: white;
+  position: absolute;
+  right: 10px;
+  transition: opacity linear 0.5s;
+  font-size: 14px;
+  border-radius: 10px;
+}
+
+.profile__redirect-button:hover {
+  opacity: 0.6;
+}
+
+@media screen and (max-width: 650px) {
+  .profile__redirect-button {
+    margin-top: 20px;
+  }
+}

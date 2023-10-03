@@ -6,7 +6,9 @@ import Main from "./Main";
 import Footer from "./Footer";
 import Register from "./Register";
 import Login from "./Login";
+import FinancialsDetails from "./FinancialsDetails";
 import ProtectedRoute from "./ProtectedRoute";
+import Spinner from "./Spinner";
 
 import Api from "../utils/api";
 import { authorize, authenticate } from "../utils/auth";
@@ -18,6 +20,7 @@ function App(props) {
     React.useState(false);
 
   const [isEditAvatarPopupOpen, setEditAvatarPopupOpen] = React.useState(false);
+
   const [currentFarm, setCurrentFarm] = React.useState("");
 
   const [isLoggedIn, setIsLoggedIn] = React.useState(false);
@@ -45,6 +48,8 @@ function App(props) {
   const [projectedCostCategories, setProjectedCostCategories] =
     React.useState("");
 
+  const [isLoading, setIsLoading] = React.useState(true);
+
   const history = useHistory();
 
   const BASE_URL = "http://localhost:3000";
@@ -58,20 +63,34 @@ function App(props) {
     },
   });
 
-  function onSignOut() {
-    localStorage.removeItem("jwt");
-    setToken("");
-    setFarmName("");
-    setIsLoggedIn(false);
-  }
-
   function closeAllPopups() {
     setEditAvatarPopupOpen(false);
     setEditProfilePopupOpen(false);
     setInfoTooltipOpen(false);
   }
 
+  function handleDeleteFinancial(_id) {
+    api.deleteFinancials(_id).then(() => {
+      setFinancials((state) =>
+        state.filter((financial) => financial._id !== _id)
+      );
+    });
+    getFinancialsData();
+  }
+
+  function handleConvertFinancial(_id) {
+    api.convertFinancials(_id).then(() => {
+      setFinancials((state) =>
+        state.map((financial) =>
+          financial._id === _id ? { ...financial, hasOcurred: true } : financial
+        )
+      );
+    });
+    getFinancialsData();
+  }
+
   const getFinancialsData = async () => {
+    setIsLoading(true);
     try {
       const [
         financialsData,
@@ -99,7 +118,7 @@ function App(props) {
         api.postFinancialsCategories("Custo", false),
       ]);
 
-      setFinancials(financialsData);
+      setFinancials(financialsData.financials);
       setIncurredRevenueMonthly(incurredRevenueMonthlyData.calculateFinancials);
       setIncurredCostMonthly(incurredCostMonthlyData.calculateFinancials);
       setIncurredProfitMonthly(incurredProfitMonthlyData.profit);
@@ -112,8 +131,10 @@ function App(props) {
       setIncurredCostCategories(incurredCostCategoriesData.financial);
       setProjectedRevenueCategories(projectedRevenueCategoriesData.financial);
       setProjectedCostCategories(projectedCostCategoriesData.financial);
+      setIsLoading(false);
     } catch (error) {
       console.error("Erro ao buscar dados:", error);
+      setIsLoading(false);
     }
   };
 
@@ -162,67 +183,93 @@ function App(props) {
   }
 
   React.useEffect(() => {
-    authenticateWithToken(token)
-      .then((res) => {
-        if (res.user.farmName) {
+    const fetchInitialData = async () => {
+      setIsLoading(true);
+      try {
+        const authResponse = await authenticateWithToken(token);
+        if (
+          authResponse.user.farmName &&
+          history.location.pathname === "/signin"
+        ) {
           history.push("/");
         }
-      })
-      .catch((err) => {
+      } catch (err) {
         console.log(err);
-      });
-  }, []);
+        history.push("/signin");
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchInitialData();
+  }, [token, history]);
 
   React.useEffect(() => {
-    api
-      .getFarmInfo()
-      .then((res) => {
-        setCurrentFarm(res.user);
-      })
-      .then((res) => {
-        getFinancialsData();
-      })
-      .catch((err) => {
+    const fetchFarmInfoAndFinancials = async () => {
+      setIsLoading(true);
+      try {
+        const farmInfo = await api.getFarmInfo();
+        setCurrentFarm(farmInfo.user);
+        await getFinancialsData();
+      } catch (err) {
         console.log(err);
-      });
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchFarmInfoAndFinancials();
   }, []);
 
   return (
     <CurrentUserContext.Provider value={currentFarm}>
       <Header farmName={farmName} onSignOut={onSignOut} />
-      <Switch>
-        <Route exact path="/signup">
-          <Register
-            isOpen={InfoTooltipOpen}
-            closeAllPopups={closeAllPopups}
-            handleAuthResponse={handleAuthResponse}
+      {isLoading ? (
+        <Spinner />
+      ) : (
+        <Switch>
+          <Route exact path="/signup">
+            <Register
+              isOpen={InfoTooltipOpen}
+              closeAllPopups={closeAllPopups}
+              handleAuthResponse={handleAuthResponse}
+            />
+          </Route>
+          <Route exact path="/signin">
+            <Login
+              onLogin={onLogin}
+              isOpen={InfoTooltipOpen}
+              closeAllPopups={closeAllPopups}
+              handleAuthResponse={handleAuthResponse}
+            />
+          </Route>
+          <ProtectedRoute
+            path="/details"
+            loggedIn={isLoggedIn}
+            component={FinancialsDetails}
+            currentFarm={currentFarm}
+            financials={financials}
+            onDelete={handleDeleteFinancial}
+            onConvert={handleConvertFinancial}
           />
-        </Route>
-        <Route exact path="/signin">
-          <Login
-            onLogin={onLogin}
-            isOpen={InfoTooltipOpen}
-            closeAllPopups={closeAllPopups}
-            handleAuthResponse={handleAuthResponse}
+          <ProtectedRoute
+            path="/"
+            loggedIn={isLoggedIn}
+            component={Main}
+            currentFarm={currentFarm}
+            incurredRevenueMonthly={incurredRevenueMonthly}
+            incurredCostMonthly={incurredCostMonthly}
+            incurredProfitMonthly={incurredProfitMonthly}
+            incurredRevenueCategories={incurredRevenueCategories}
+            incurredCostCategories={incurredCostCategories}
+            projectedRevenueMonthly={projectedRevenueMonthly}
+            projectedCostMonthly={projectedCostMonthly}
+            projectedProfitMonthly={projectedProfitMonthly}
+            projectedRevenueCategories={projectedRevenueCategories}
+            projectedCostCategories={projectedCostCategories}
           />
-        </Route>
-        <ProtectedRoute
-          path="/"
-          loggedIn={isLoggedIn}
-          component={Main}
-          currentFarm={currentFarm}
-          incurredRevenueMonthly={incurredRevenueMonthly}
-          incurredCostMonthly={incurredCostMonthly}
-          incurredProfitMonthly={incurredProfitMonthly}
-          incurredRevenueCategories={incurredRevenueCategories}
-          incurredCostCategories={incurredCostCategories}
-          projectedRevenueMonthly={projectedRevenueMonthly}
-          projectedCostMonthly={projectedCostMonthly}
-          projectedProfitMonthly={projectedProfitMonthly}
-          projectedRevenueCategories={projectedRevenueCategories}
-          projectedCostCategories={projectedCostCategories}
-        />
-      </Switch>
+        </Switch>
+      )}
       <Footer />
     </CurrentUserContext.Provider>
   );

@@ -57,6 +57,7 @@
 @import url(./blocks/profile/__name/profile__name.css);
 @import url(./blocks/profile/__about-me/profile__about-me.css);
 @import url(./blocks/profile/__edit-button/profile__edit-button.css);
+@import url(./blocks/profile/__redirect-button/profile__redirect-button.css);
 
 /* graphic's section settings */
 @import url(./blocks/graphics/graphics.css);
@@ -67,3 +68,13 @@
 @import url(./blocks/graphic/__profit-monthly/graphic__profit-monthly.css);
 @import url(./blocks/graphic/__title/graphic__title.css);
 @import url(./blocks/graphic/__error/graphic__error.css);
+
+@import url(./blocks/spinner/spinner.css);
+
+@import url(./blocks/table/table.css);
+@import url(./blocks/table/__header/table__header.css);
+@import url(./blocks/table/__row/table__row.css);
+@import url(./blocks/table/__button/table__button.css);
+@import url(./blocks/table/__button/_delete/table__button_delete.css);
+@import url(./blocks/table/__button/_convert/table__button_covert.css);
+@import url(./blocks/table-container/table-container.css);

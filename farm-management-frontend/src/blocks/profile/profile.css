@@ -4,7 +4,8 @@
   margin: 0;
   margin-top: 40px;
   margin-left: 10px;
-  position: relative; /* using this property to position the add-button in the left size of the container */
+  position: relative;
+  width: 100%;
 }
 
 @media screen and (max-width: 880px) {
