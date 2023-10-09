@@ -9,6 +9,7 @@ import Login from "./Login";
 import FinancialsDetails from "./FinancialsDetails";
 import ProtectedRoute from "./ProtectedRoute";
 import Spinner from "./Spinner";
+import Profile from "./Profile";
 
 import Api from "../utils/api";
 import { authorize, authenticate } from "../utils/auth";
@@ -19,12 +20,13 @@ function App(props) {
   const [isEditProfilePopupOpen, setEditProfilePopupOpen] =
     React.useState(false);
 
-  const [isEditAvatarPopupOpen, setEditAvatarPopupOpen] = React.useState(false);
+  const [isEditPhotoPopupOpen, setEditPhotoPopupOpen] = React.useState(false);
+
+  const [isAddFinancialPopupOpen, setAddFinancialOpen] = React.useState(false);
 
   const [currentFarm, setCurrentFarm] = React.useState("");
 
   const [isLoggedIn, setIsLoggedIn] = React.useState(false);
-  const [farmName, setFarmName] = React.useState("");
   const [InfoTooltipOpen, setInfoTooltipOpen] = React.useState(false);
 
   const [token, setToken] = React.useState(localStorage.getItem("jwt"));
@@ -64,9 +66,22 @@ function App(props) {
   });
 
   function closeAllPopups() {
-    setEditAvatarPopupOpen(false);
+    setEditPhotoPopupOpen(false);
     setEditProfilePopupOpen(false);
     setInfoTooltipOpen(false);
+    setAddFinancialOpen(false);
+  }
+
+  function handleAddFinancialPopup() {
+    setAddFinancialOpen(true);
+  }
+
+  function handleEditPhotoPopup() {
+    setEditPhotoPopupOpen(true);
+  }
+
+  function handleEditProfilePopup() {
+    setEditProfilePopupOpen(true);
   }
 
   function handleDeleteFinancial(_id) {
@@ -87,6 +102,52 @@ function App(props) {
       );
     });
     getFinancialsData();
+  }
+
+  function updatePhoto(farmPhoto) {
+    api
+      .updateFarmImage(farmPhoto)
+      .then((res) => {
+        setCurrentFarm(res.user);
+        return res;
+      })
+      .then(() => {
+        closeAllPopups();
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }
+
+  function updateProfile(farmInfo) {
+    api
+      .updateFarmInfo(farmInfo)
+      .then((res) => {
+        setCurrentFarm(res.user);
+        return res;
+      })
+      .then(() => {
+        closeAllPopups();
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }
+
+  function createFinancials(newFinancial) {
+    api
+      .createFinancials(newFinancial)
+      .then((res) => {
+        console.log(res);
+        // setFinancials([res.financial, ...financials]);
+        return res;
+      })
+      .then(() => {
+        closeAllPopups();
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   }
 
   const getFinancialsData = async () => {
@@ -141,7 +202,6 @@ function App(props) {
   function authenticateWithToken(token) {
     return authenticate(token)
       .then((res) => {
-        setFarmName(res.user.farmName);
         setIsLoggedIn(true);
         setCurrentFarm(res.user);
         return res;
@@ -178,7 +238,7 @@ function App(props) {
   function onSignOut() {
     localStorage.removeItem("jwt");
     setToken("");
-    setFarmName("");
+    setCurrentFarm("");
     setIsLoggedIn(false);
   }
 
@@ -187,15 +247,11 @@ function App(props) {
       setIsLoading(true);
       try {
         const authResponse = await authenticateWithToken(token);
-        if (
-          authResponse.user.farmName &&
-          history.location.pathname === "/signin"
-        ) {
+        if (authResponse.user && history.location.pathname === "/signin") {
           history.push("/");
         }
       } catch (err) {
         console.log(err);
-        history.push("/signin");
       } finally {
         setIsLoading(false);
       }
@@ -221,9 +277,24 @@ function App(props) {
     fetchFarmInfoAndFinancials();
   }, []);
 
+  const ProfileComponent = (
+    <>
+      <Profile
+        currentFarm={currentFarm}
+        closeAllPopups={closeAllPopups}
+        isEditPhotoPopupOpen={isEditPhotoPopupOpen}
+        updatePhoto={updatePhoto}
+        setEditPhotoPopupOpen={handleEditPhotoPopup}
+        isEditProfilePopupOpen={isEditProfilePopupOpen}
+        updateProfile={updateProfile}
+        setEditProfilePopupOpen={handleEditProfilePopup}
+      />
+    </>
+  );
+
   return (
     <CurrentUserContext.Provider value={currentFarm}>
-      <Header farmName={farmName} onSignOut={onSignOut} />
+      <Header farmName={currentFarm.farmName} onSignOut={onSignOut} />
       {isLoading ? (
         <Spinner />
       ) : (
@@ -247,16 +318,19 @@ function App(props) {
             path="/details"
             loggedIn={isLoggedIn}
             component={FinancialsDetails}
-            currentFarm={currentFarm}
             financials={financials}
             onDelete={handleDeleteFinancial}
             onConvert={handleConvertFinancial}
+            ProfileComponent={ProfileComponent}
+            closeAllPopups={closeAllPopups}
+            isAddFinancialPopupOpen={isAddFinancialPopupOpen}
+            setAddFinancialOpen={handleAddFinancialPopup}
+            addFinancial={createFinancials}
           />
           <ProtectedRoute
             path="/"
             loggedIn={isLoggedIn}
             component={Main}
-            currentFarm={currentFarm}
             incurredRevenueMonthly={incurredRevenueMonthly}
             incurredCostMonthly={incurredCostMonthly}
             incurredProfitMonthly={incurredProfitMonthly}
@@ -267,6 +341,7 @@ function App(props) {
             projectedProfitMonthly={projectedProfitMonthly}
             projectedRevenueCategories={projectedRevenueCategories}
             projectedCostCategories={projectedCostCategories}
+            ProfileComponent={ProfileComponent}
           />
         </Switch>
       )}

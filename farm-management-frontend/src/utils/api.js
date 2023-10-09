@@ -145,14 +145,14 @@ export default class Api {
     });
   }
 
-  updateFarmImage(farmInfo) {
+  updateFarmImage(farmPhoto) {
     const url = this.baseUrl + "/farm-info/farm-photo";
 
     const data = {
       headers: this.headers,
       method: "PATCH",
       body: JSON.stringify({
-        farmPhoto: farmInfo.farmPhoto,
+        farmPhoto: farmPhoto,
       }),
     };
 

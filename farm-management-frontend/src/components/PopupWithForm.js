@@ -20,18 +20,18 @@ function PopupWithForm(props) {
           />
         </button>
         <div className="popup__inputs">
-          <h3
-            className={
-              props.name === "delete-form"
-                ? "popup__title popup__title_delete-form"
-                : "popup__title"
-            }
-          >
-            {props.title}
-          </h3>
+          <h3 className={"popup__title"}>{props.title}</h3>
           {props.children}
-          <button className="popup__button" type="submit">
-            {props.name === "delete-form" ? "Sim" : "Salvar"}
+          <button
+            className={
+              !props.isEnabled
+                ? "popup__button popup__button_disabled"
+                : "popup__button"
+            }
+            type="submit"
+            disabled={!props.isEnabled}
+          >
+            Salvar
           </button>
         </div>
       </form>

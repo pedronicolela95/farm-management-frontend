@@ -1,18 +1,9 @@
 import React from "react";
-import editButtonImg from "../images/profile/edit_button.svg";
-import editImageButton from "../images/profile/edit-picture.svg";
-
-// import PopupWithForm from "./PopupWithForm";
-// import EditProfilePopup from "./EditProfilePopup";
-// import EditAvatarPopup from "./EditAvatarPopup";
-// import AddPlacePopup from "./AddPlacePopup";
 import MyBarChart from "./BarGraphic";
 import MyPieChart from "./PieGraphic";
-import Profile from "./Profile";
 
 function Main(props) {
   const {
-    currentFarm,
     incurredRevenueMonthly,
     incurredCostMonthly,
     incurredProfitMonthly,
@@ -23,11 +14,12 @@ function Main(props) {
     projectedProfitMonthly,
     projectedRevenueCategories,
     projectedCostCategories,
+    ProfileComponent,
   } = props;
 
   return (
     <>
-      <Profile currentFarm={currentFarm} />
+      {ProfileComponent}
       <section className="graphics">
         <h3 className="graphics__title">Finanças realizadas</h3>
         <div className="graphic">
