@@ -138,11 +138,11 @@ function App(props) {
     api
       .createFinancials(newFinancial)
       .then((res) => {
-        console.log(res);
-        // setFinancials([res.financial, ...financials]);
+        setFinancials([res.financial, ...financials]);
         return res;
       })
       .then(() => {
+        getFinancialsData();
         closeAllPopups();
       })
       .catch((error) => {

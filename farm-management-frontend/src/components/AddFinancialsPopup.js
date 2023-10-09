@@ -10,7 +10,7 @@ function AddFinancialPopup(props) {
   const [type, setType] = useState("Custo");
   const [hasOccurred, setHasOccurred] = useState("Realizada");
   const [amount, setAmount] = useState(0);
-  const [category, setCategory] = useState("");
+  const [category, setCategory] = useState("Insumos Agrícolas");
   const [date, setDate] = useState("");
 
   const [descriptionValidatorMessage, setDescriptionValidatorMessage] =
@@ -44,6 +44,7 @@ function AddFinancialPopup(props) {
         "Custos de Marketing e Vendas",
         "Outros",
       ]);
+      setCategory("Insumos Agrícolas");
     } else if (type === "Receita") {
       setCategoryOptions([
         "Venda de Animais",
@@ -51,6 +52,7 @@ function AddFinancialPopup(props) {
         "Arrendamento de Terras",
         "Outros",
       ]);
+      setCategory("Venda de Animais");
     }
   }, [type]);
 
@@ -106,7 +108,7 @@ function AddFinancialPopup(props) {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    const hasOccurredBollean = hasOccurred === "Realizada" ? true : false;
+    const hasOcurredBollean = hasOccurred === "Realizada" ? true : false;
     if (isEnabledToSubmit) {
       onAddFinancial({
         description: description,
@@ -114,7 +116,7 @@ function AddFinancialPopup(props) {
         type: type,
         date: date,
         amount: amount,
-        hasOccurred: hasOccurredBollean,
+        hasOcurred: hasOcurredBollean,
       });
     }
   };
