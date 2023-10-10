@@ -1,0 +1,7 @@
+.graphic__title {
+  color: #3e721d;
+  font-size: 16px;
+  text-overflow: clip;
+  width: 100%;
+  text-align: left;
+}

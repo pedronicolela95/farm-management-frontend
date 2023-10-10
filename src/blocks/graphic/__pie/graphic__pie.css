@@ -1,0 +1,13 @@
+.graphic__pie {
+  margin-top: 10px;
+  margin-left: 10px;
+  width: 90%;
+  height: 75%;
+}
+
+@media screen and (max-width: 690px) {
+  .graphic__pie {
+    width: 100%;
+    height: 75%;
+  }
+}

@@ -1,0 +1,10 @@
+.table__row td {
+  border-bottom: 2px solid gray;
+  padding: 10px 30px;
+  text-align: left;
+  font-size: 12px;
+}
+
+.table__row_highlighted td {
+  background-color: #d9cb9e;
+}

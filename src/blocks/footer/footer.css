@@ -1,0 +1,6 @@
+.footer {
+  margin-top: min(68px, calc(3.21vw + 39.71px));
+  margin-bottom: min(60px, calc(4.29vw + 22.29px));
+  padding-top: 10px;
+  border-top: 1px solid rgba(0, 100, 0, 1);
+}
