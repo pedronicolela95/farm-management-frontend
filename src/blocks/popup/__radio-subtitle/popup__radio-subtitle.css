@@ -1,0 +1,8 @@
+.popup__radio-subtitle {
+  width: calc(min(358px, calc(21.43vw + 169.43px)) / 2);
+  margin: 10px 0px 0px 0px;
+  font-size: 12px;
+  line-height: 14px;
+  font-weight: lighter;
+  color: #4a4a4a;
+}

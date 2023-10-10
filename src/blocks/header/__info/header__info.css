@@ -1,0 +1,12 @@
+.header__info {
+  margin: 0;
+  display: flex;
+  align-items: center;
+  background-color: transparent;
+}
+
+@media screen and (max-width: 600px) {
+  .header__info {
+    flex-direction: column;
+  }
+}

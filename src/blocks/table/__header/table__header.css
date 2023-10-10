@@ -1,0 +1,8 @@
+.table__header th {
+  border-bottom: 1px solid #ccc;
+  text-align: left;
+  padding: 10px 30px;
+  font-size: 14px;
+  background-color: grey;
+  color: #fff;
+}

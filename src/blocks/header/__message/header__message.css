@@ -1,0 +1,14 @@
+.header__message {
+  color: rgba(128, 128, 128, 1);
+  font-size: 18px;
+  font-weight: 400;
+  line-height: 22px;
+  text-decoration: none;
+}
+
+@media screen and (max-width: 600px) {
+  .header__message {
+    font-size: 16px;
+    margin-bottom: 10px;
+  }
+}

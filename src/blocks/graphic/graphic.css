@@ -1,0 +1,9 @@
+.graphic {
+  border: 1px solid gray;
+  border-radius: 10px;
+  width: 100%;
+  height: 200px;
+  display: flex;
+  justify-content: flex-start;
+  align-items: flex-start;
+}

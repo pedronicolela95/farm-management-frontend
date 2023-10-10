@@ -1,0 +1,8 @@
+.graphics__title {
+  width: 100%;
+  text-align: left;
+  color: #6d9b12; /* Verde Claro (Plantas) */
+  font-size: 24px;
+  font-weight: bold;
+  grid-column: span 2;
+}
