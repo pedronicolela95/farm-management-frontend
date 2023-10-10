@@ -1,5 +1,4 @@
-export const BASE_URL = "http://localhost:3000";
-// fix me with new url
+export const BASE_URL = "https://safe-farm-backend.onrender.com";
 
 export const register = (email, password, farmName, city, state) => {
   return fetch(`${BASE_URL}/signup`, {

@@ -16,7 +16,7 @@ import { authorize, authenticate } from "../utils/auth";
 
 import { CurrentUserContext } from "../contexts/CurrentUserContext";
 
-function App(props) {
+function App() {
   const [isEditProfilePopupOpen, setEditProfilePopupOpen] =
     React.useState(false);
 
@@ -54,7 +54,7 @@ function App(props) {
 
   const history = useHistory();
 
-  const BASE_URL = "http://localhost:3000";
+  const BASE_URL = "https://safe-farm-backend.onrender.com";
   // fix me
 
   const api = new Api({
@@ -153,46 +153,60 @@ function App(props) {
   const getFinancialsData = async () => {
     setIsLoading(true);
     try {
-      const [
-        financialsData,
-        incurredRevenueMonthlyData,
-        incurredCostMonthlyData,
-        incurredProfitMonthlyData,
-        projectedRevenueMonthlyData,
-        projectedCostMonthlyData,
-        projectedProfitMonthlyData,
-        incurredRevenueCategoriesData,
-        incurredCostCategoriesData,
-        projectedRevenueCategoriesData,
-        projectedCostCategoriesData,
-      ] = await Promise.all([
-        api.getFinancials(),
-        api.postFinancialsMonthly("Receita", true),
-        api.postFinancialsMonthly("Custo", true),
-        api.postProfitsMonthly(true),
-        api.postFinancialsMonthly("Receita", false),
-        api.postFinancialsMonthly("Custo", false),
-        api.postProfitsMonthly(false),
-        api.postFinancialsCategories("Receita", true),
-        api.postFinancialsCategories("Custo", true),
-        api.postFinancialsCategories("Receita", false),
-        api.postFinancialsCategories("Custo", false),
-      ]);
+      if (token) {
+        const [
+          financialsData,
+          incurredRevenueMonthlyData,
+          incurredCostMonthlyData,
+          incurredProfitMonthlyData,
+          projectedRevenueMonthlyData,
+          projectedCostMonthlyData,
+          projectedProfitMonthlyData,
+          incurredRevenueCategoriesData,
+          incurredCostCategoriesData,
+          projectedRevenueCategoriesData,
+          projectedCostCategoriesData,
+        ] = await Promise.all([
+          api.getFinancials(),
+          api.postFinancialsMonthly("Receita", true),
+          api.postFinancialsMonthly("Custo", true),
+          api.postProfitsMonthly(true),
+          api.postFinancialsMonthly("Receita", false),
+          api.postFinancialsMonthly("Custo", false),
+          api.postProfitsMonthly(false),
+          api.postFinancialsCategories("Receita", true),
+          api.postFinancialsCategories("Custo", true),
+          api.postFinancialsCategories("Receita", false),
+          api.postFinancialsCategories("Custo", false),
+        ]);
 
-      setFinancials(financialsData.financials);
-      setIncurredRevenueMonthly(incurredRevenueMonthlyData.calculateFinancials);
-      setIncurredCostMonthly(incurredCostMonthlyData.calculateFinancials);
-      setIncurredProfitMonthly(incurredProfitMonthlyData.profit);
-      setProjectedRevenueMonthly(
-        projectedRevenueMonthlyData.calculateFinancials
-      );
-      setProjectedCostMonthly(projectedCostMonthlyData.calculateFinancials);
-      setProjectedProfitMonthly(projectedProfitMonthlyData.profit);
-      setIncurredRevenueCategories(incurredRevenueCategoriesData.financial);
-      setIncurredCostCategories(incurredCostCategoriesData.financial);
-      setProjectedRevenueCategories(projectedRevenueCategoriesData.financial);
-      setProjectedCostCategories(projectedCostCategoriesData.financial);
-      setIsLoading(false);
+        financialsData.financials.sort((a, b) => {
+          const dateA = new Date(a.date);
+          const dateB = new Date(b.date);
+
+          if (dateA < dateB) return -1;
+          if (dateA > dateB) return 1;
+
+          return a.id - b.id;
+        });
+
+        setFinancials(financialsData.financials);
+        setIncurredRevenueMonthly(
+          incurredRevenueMonthlyData.calculateFinancials
+        );
+        setIncurredCostMonthly(incurredCostMonthlyData.calculateFinancials);
+        setIncurredProfitMonthly(incurredProfitMonthlyData.profit);
+        setProjectedRevenueMonthly(
+          projectedRevenueMonthlyData.calculateFinancials
+        );
+        setProjectedCostMonthly(projectedCostMonthlyData.calculateFinancials);
+        setProjectedProfitMonthly(projectedProfitMonthlyData.profit);
+        setIncurredRevenueCategories(incurredRevenueCategoriesData.financial);
+        setIncurredCostCategories(incurredCostCategoriesData.financial);
+        setProjectedRevenueCategories(projectedRevenueCategoriesData.financial);
+        setProjectedCostCategories(projectedCostCategoriesData.financial);
+        setIsLoading(false);
+      }
     } catch (error) {
       console.error("Erro ao buscar dados:", error);
       setIsLoading(false);
@@ -240,13 +254,17 @@ function App(props) {
     setToken("");
     setCurrentFarm("");
     setIsLoggedIn(false);
+    closeAllPopups();
   }
 
   React.useEffect(() => {
     const fetchInitialData = async () => {
       setIsLoading(true);
       try {
-        const authResponse = await authenticateWithToken(token);
+        let authResponse = {};
+        if (token) {
+          authResponse = await authenticateWithToken(token);
+        }
         if (authResponse.user && history.location.pathname === "/signin") {
           history.push("/");
         }

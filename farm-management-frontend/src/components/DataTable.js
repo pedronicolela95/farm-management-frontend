@@ -4,7 +4,10 @@ const moment = require("moment");
 function DataTable({ data, onDelete, onConvert }) {
   const formatDate = (dateString) => {
     const date = new Date(dateString);
-    return `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}`;
+    const day = String(date.getUTCDate()).padStart(2, "0");
+    const month = String(date.getUTCMonth() + 1).padStart(2, "0");
+    const year = date.getUTCFullYear();
+    return `${day}/${month}/${year}`;
   };
 
   function deleteFinancial(event, _id) {
